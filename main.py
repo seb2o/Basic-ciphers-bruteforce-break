@@ -208,6 +208,17 @@ def decode_viginere(stream_list, english_freq):
     # print(reorder_viginere(decoded))
 
 
+def change_punctuation_for_number(string):
+    sub_table = {
+        'A': 'A', 'B': 'B', 'C': 'C', 'D': 'D', 'E': 'E', 'F': 'F',
+        'G': 'G', 'H': 'H', 'I': 'I', 'J': 'J', 'K': 'K', 'L': 'L',
+        'M': 'M', 'N': 'N', 'O': 'O', 'P': 'P', 'Q': 'Q', 'R': 'R',
+        'S': 'S', 'T': 'T', 'U': 'U', 'V': 'V', 'W': 'W', 'X': 'X',
+        'Y': 'Y', 'Z': 'Z', ',': '0', '.': '1', '-': '2'
+    }
+    return ''.join([sub_table[i] for i in string])
+
+
 def main():
     english_freq = {'E': .1193, 'T': .088, 'A': .079, 'O': .0752, 'I': .0682, 'H': .0642, 'N': .0623, 'S': .0599,
                     'R': .0554,
@@ -216,10 +227,11 @@ def main():
                     ',': .017, '.': .015, 'P': .0147, 'B': .0137, 'V': .0092, 'K': .0075, '-': .0021, 'X': .0014,
                     'Q': .0011,
                     'J': .0009, 'Z': .0004}
-    files = ["0.txt", "2.txt"]
-    with open("test.txt", 'r') as f:
-        plot_frequencies(to_frequencies_sorted(letter_count(f.read()), 1000))
-
+    file = "2.txt"
+    with open(file, 'r') as f:
+        res = change_punctuation_for_number(f.read())
+    with open('2-Hill-NoPunctuation.txt', 'w') as f:
+        f.write(res)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
