@@ -1,5 +1,5 @@
 from itertools import zip_longest
-
+import hill_cryptanalysis
 import matplotlib.pyplot as plt
 
 
@@ -228,11 +228,18 @@ def main():
                     ',': .017, '.': .015, 'P': .0147, 'B': .0137, 'V': .0092, 'K': .0075, '-': .0021, 'X': .0014,
                     'Q': .0011,
                     'J': .0009, 'Z': .0004}
-    file = "2.txt"
-    with open(file, 'r') as f:
-        res = change_punctuation_for_number(f.read())
-    with open('2-Hill-NoPunctuation.txt', 'w') as f:
-        f.write(res)
+    table = {
+        'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5,
+        'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10, 'L': 11,
+        'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16, 'R': 17,
+        'S': 18, 'T': 19, 'U': 20, 'V': 21, 'W': 22, 'X': 23,
+        'Y': 24, 'Z': 25, '1': 26, '2': 27, '3': 28
+    }
+
+    cipher = hill_cryptanalysis.load_cipher("2-Hill-NoPunctuation.txt")
+    supposed_quadgram = ["THAT", "THIS", "THER"]
+    res = hill_cryptanalysis.test_key_from_quadgrams(cipher, supposed_quadgram, table)
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
