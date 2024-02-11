@@ -3,7 +3,7 @@ import math
 import main
 
 
-def to_matrix(string):
+def string_to_matrix(string):
     """
     This function transform a string input into a matrix of characters of dimension 2*(N - N%2)/2
     :param string: even sized string. else, last char is dropped
@@ -12,14 +12,19 @@ def to_matrix(string):
     return [[string[i + j] for i in range(0, n - 1, 2)] for j in range(2)]
 
 
-def to_digit(matrix, table):
+def text_matrix_to_digit(matrix, t):
     """
-
+    Convert a char matrix to its number matrix
     :param matrix: each element is a char. if not in the table, error is thrown
-    :param table: table of conversion for chars to number in the matrix to the alphabet.
+    :param t: table of conversion for chars to number in the matrix to the alphabet.
     :return: matrix of the same dimension but with each char converted according to the table
     """
-    return [[table[elem] for elem in row] for row in matrix]
+    return [[t[elem] for elem in row] for row in matrix]
+
+
+def matrix_to_string(matrix, t):
+    i_inverse = {v: k for k, v in t.items()}
+    return ''.join([i_inverse[elem] for col in zip(*matrix) for elem in col])
 
 
 def load_cipher(filename):
@@ -60,19 +65,27 @@ def adjugate(matrix):
 
 def invert_matrix_mod(matrix, mod):
     factor = pow(det(matrix), -1, mod)
-    return [[(factor*elem) % mod for elem in row] for row in adjugate(matrix)]
+    return [[(factor * elem) % mod for elem in row] for row in adjugate(matrix)]
 
 
 def mult_matrix_mod(a, b, mod):
     result = []
-    for i in range(2):
+    for i in range(len(a)):
         row = []
-        for j in range(2):
+        for j in range(len(b[0])):
             # Compute the dot product of the ith row of a and the jth column of b
-            dot_product = sum(a[i][k] * b[k][j] for k in range(2)) % mod
+            dot_product = sum(a[i][k] * b[k][j] for k in range(len(b))) % mod
             row.append(dot_product)
         result.append(row)
     return result
+
+
+def decrypt(cipher, key, t):
+    mod = len(t)
+    C = text_matrix_to_digit(string_to_matrix(cipher), t)
+    K_inverse = invert_matrix_mod(key, mod)
+    P = mult_matrix_mod(K_inverse, C, mod)
+    return matrix_to_string(P, t)
 
 
 def key_from_known_plaintext(plaintext, cipher, table):
@@ -87,8 +100,8 @@ def key_from_known_plaintext(plaintext, cipher, table):
 
     p = plaintext
     c = cipher
-    p_matrix = to_digit(to_matrix(p), table)
-    c_matrix = to_digit(to_matrix(c), table)
+    p_matrix = text_matrix_to_digit(string_to_matrix(p), table)
+    c_matrix = text_matrix_to_digit(string_to_matrix(c), table)
     mod = len(table)
 
     return mult_matrix_mod(c_matrix, invert_matrix_mod(p_matrix, mod), mod)
@@ -96,18 +109,12 @@ def key_from_known_plaintext(plaintext, cipher, table):
 
 # plot_cipher_frequencies(load_cipher("2-Hill-NoPunctuation.txt"))
 table = {
-        'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5,
-        'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10, 'L': 11,
-        'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16, 'R': 17,
-        'S': 18, 'T': 19, 'U': 20, 'V': 21, 'W': 22, 'X': 23,
-        'Y': 24, 'Z': 25, '1': 26, '2': 27, '3': 28
-    }
-
-print(key_from_known_plaintext("THAT", "O2XZ", table))
-
-
-
-
-
-
+    'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5,
+    'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10, 'L': 11,
+    'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16, 'R': 17,
+    'S': 18, 'T': 19, 'U': 20, 'V': 21, 'W': 22, 'X': 23,
+    'Y': 24, 'Z': 25, '1': 26, '2': 27, '3': 28
+}
+# print(key_from_known_plaintext("THAT", "2ZY3", table))
+print(decrypt("AZERTYUIOP", [[2, 0], [0, 1]], table))
 
