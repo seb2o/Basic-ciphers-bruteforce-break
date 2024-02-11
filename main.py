@@ -4,32 +4,63 @@ import matplotlib.pyplot as plt
 
 
 def plot_frequencies(d, t="Graph", c=None):
+    plt.figure(figsize=(30, 10))
     plt.bar(list(d.keys()), list(d.values()), color=c)
     plt.title(t)
     plt.show()
 
 
-def count_digrams(text):
+def count_digrams(text, sliding=True):
     digram_count = {}
-    for i in range(len(text) - 1):
-        digram = text[i:i + 2]
-        if digram in digram_count:
-            digram_count[digram] += 1
-        else:
-            digram_count[digram] = 1
-    return {k: v for k, v in digram_count.items() if v > 10}
-
+    n = len(text)
+    if sliding:
+        for i in range(n - 1):
+            digram = text[i:i + 2]
+            if digram in digram_count:
+                digram_count[digram] += 1
+            else:
+                digram_count[digram] = 1
+        return {k: v for k, v in digram_count.items() if v > 10}
+    else:
+        for i in range(0, n, 2):
+            digram = text[i:i + 2]
+            if digram in digram_count:
+                digram_count[digram] += 1
+            else:
+                digram_count[digram] = 1
+        return {k: v for k, v in digram_count.items() if v > 4}
 
 
 def count_trigrams(text):
     trigram_count = {}
     for i in range(len(text) - 2):
-        trigram = text[i:i+3]
+        trigram = text[i:i + 3]
         if trigram in trigram_count:
             trigram_count[trigram] += 1
         else:
             trigram_count[trigram] = 1
-    return {k: v for k, v in trigram_count.items() if v > 1}
+    return {k: v for k, v in trigram_count.items() if v > 2}
+
+
+def count_quadgrams(text, sliding=True):
+    quadgram_count = {}
+    n = len(text)
+    if sliding:
+        for i in range(n - 3):
+            quadgram = text[i:i + 4]
+            if quadgram in quadgram_count:
+                quadgram_count[quadgram] += 1
+            else:
+                quadgram_count[quadgram] = 1
+        return {k: v for k, v in quadgram_count.items() if v > 2}
+    else:
+        for i in range(0, n, 4):
+            quadgram = text[i:i + 4]
+            if quadgram in quadgram_count:
+                quadgram_count[quadgram] += 1
+            else:
+                quadgram_count[quadgram] = 1
+        return {k: v for k, v in quadgram_count.items() if v > 1}
 
 
 def letter_count(s):
