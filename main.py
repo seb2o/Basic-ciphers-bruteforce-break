@@ -3,10 +3,11 @@ from itertools import zip_longest
 import matplotlib.pyplot as plt
 
 
-def plot_frequencies(d, t="Graph", c=None):
-    plt.figure(figsize=(30, 10))
-    plt.bar(list(d.keys()), list(d.values()), color=c)
-    plt.title(t)
+def plot_frequencies(frequencies_table, title="Graph", color=None, figsize=(25, 10)):
+    plt.figure(figsize=figsize)
+    plt.subplots_adjust(left=.03, right=.99, bottom=.1)
+    plt.bar(list(frequencies_table.keys()), list(frequencies_table.values()), color=color)
+    plt.title(title)
     plt.show()
 
 
@@ -214,7 +215,7 @@ def change_punctuation_for_number(string):
         'G': 'G', 'H': 'H', 'I': 'I', 'J': 'J', 'K': 'K', 'L': 'L',
         'M': 'M', 'N': 'N', 'O': 'O', 'P': 'P', 'Q': 'Q', 'R': 'R',
         'S': 'S', 'T': 'T', 'U': 'U', 'V': 'V', 'W': 'W', 'X': 'X',
-        'Y': 'Y', 'Z': 'Z', ',': '0', '.': '1', '-': '2'
+        'Y': 'Y', 'Z': 'Z', ',': '1', '.': '2', '-': '3'
     }
     return ''.join([sub_table[i] for i in string])
 
