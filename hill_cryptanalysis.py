@@ -23,6 +23,12 @@ def text_matrix_to_digit(matrix, t):
 
 
 def matrix_to_string(matrix, t):
+    """
+    from an encoded matrix to a string of character
+    :param matrix: matrix 2*n, where the correspondance between elements and chars is given by table t
+    :param t: the aforementionned t
+    :return: text string corresponding to the matrix
+    """
     i_inverse = {v: k for k, v in t.items()}
     return ''.join([i_inverse[elem] for col in zip(*matrix) for elem in col])
 
@@ -88,11 +94,11 @@ def decrypt(cipher, key, t):
     return matrix_to_string(P, t)
 
 
-def key_from_known_plaintext(plaintext, cipher, table):
+def key_from_known_plaintext(plaintext, cipher, t):
     """
     :param plaintext: plaintext supposed coresponding to cipher. length must be 4
     :param cipher : cipher corresponding to aforementionned plaintext, length must be 4
-    :param table: table to retrieve numeric values from key strings
+    :param t: table to retrieve numeric values from key strings
     :return: key matrix if the pair was correctly formatted and the plaintext matrix invertible. ELse, raise error
     """
     if len(plaintext) != 4 or len(cipher) != 4:
@@ -100,21 +106,27 @@ def key_from_known_plaintext(plaintext, cipher, table):
 
     p = plaintext
     c = cipher
-    p_matrix = text_matrix_to_digit(string_to_matrix(p), table)
-    c_matrix = text_matrix_to_digit(string_to_matrix(c), table)
-    mod = len(table)
+    p_matrix = text_matrix_to_digit(string_to_matrix(p), t)
+    c_matrix = text_matrix_to_digit(string_to_matrix(c), t)
+    mod = len(t)
 
     return mult_matrix_mod(c_matrix, invert_matrix_mod(p_matrix, mod), mod)
 
 
-# plot_cipher_frequencies(load_cipher("2-Hill-NoPunctuation.txt"))
-table = {
-    'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5,
-    'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10, 'L': 11,
-    'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16, 'R': 17,
-    'S': 18, 'T': 19, 'U': 20, 'V': 21, 'W': 22, 'X': 23,
-    'Y': 24, 'Z': 25, '1': 26, '2': 27, '3': 28
-}
-# print(key_from_known_plaintext("THAT", "2ZY3", table))
-print(decrypt("AZERTYUIOP", [[2, 0], [0, 1]], table))
+def test_key_from_quadgrams(cipher,supposed_quad,table):
+    results = {}
+    for p in supposed_quad:
+        for i in main.count_quadgrams(cipher, False).keys():
+            k = f"{p}={i}"
+            try:
+                v = decrypt(cipher, key_from_known_plaintext(p, i, table), table)
+                # main.plot_frequencies(main.to_frequencies_sorted(main.letter_count(v), len(v)))
+            except ValueError as e:
+                v = e
+            results[k] = v
+    for k, v in results.items():
+        print(f"Trying with {k}\n{v}\n")
+    return results
+
+
 
